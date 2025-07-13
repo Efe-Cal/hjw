@@ -4,8 +4,6 @@ import runloop
 from hub import motion_sensor, port
 import utime
 import color_sensor
-from typing import Literal
-
 
 def getGyro():
     return -1*motion_sensor.tilt_angles()[0]
@@ -16,7 +14,7 @@ def printGyro():
 #def raspi(c):
 #    return input(f"{c}:")
 
-def adamGibiDon(angle:int, turnDir:Literal["f","b"]="f"):
+def adamGibiDon(angle:int, turnDir="f"):
     init_gyro = getGyro()
     mot1 = None
     mot2 = None
@@ -107,7 +105,7 @@ def gyroRun(velocity:int, angle:int):
     adj = int(angle-getGyro())
     motor_pair.move_tank(motor_pair.PAIR_1, velocity + adj, velocity - adj)
 
-def fastfastTurn(angle:int, turnDir:Literal["f","b"]="f"):
+def fastfastTurn(angle:int, turnDir="f"):
     # motor.run(port.A, 1000) positive
     motor_pair.stop(motor_pair.PAIR_1,stop=motor.HOLD)
     utime.sleep_ms(30)
@@ -186,7 +184,7 @@ def twoWheelSlow(angle):
 
     utime.sleep_ms(50)
 
-def gyroTurn(angle:int, spid:Literal["f","s"]="f",turnDir:Literal["f","b"]="f", ST=motor.HOLD):
+def gyroTurn(angle:int, spid="f",turnDir="f", ST=motor.HOLD):
     # motor.run(port.A, 1000) positive
     #motor_pair.stop(motor_pair.PAIR_1,stop=ST)
     utime.sleep_ms(30)
