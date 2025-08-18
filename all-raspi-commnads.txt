@@ -1,0 +1,48 @@
+CONNECTION
+====================
+
+Check WIFI
+sudo nmcli radio wifi
+
+ON/OFF WIFI
+sudo nmcli radio wifi on/off
+
+List WIFI
+sudo nmcli dev wifi list
+
+Connect to WIFI
+sudo nmcli --ask dev wifi connect <example_ssid>
+
+Disable bluetooth
+in /boot/firmware/config.txt add:
+dtoverlay=disable-bt
+
+
+SETUP PYTHON ENV (need internet)
+===============================================
+python -m venv venv && source venv/bin/activate && pip3 install rpi-lgpio mpremote gpiozero
+
+RUN PYTHON
+======================================
+source venv/bin/activate && python SpiBerryEngine.py --button 17 --red 9 --green 10 --blue 11
+
+KILL PYTHON
+=========================================
+pkill -INT python
+
+#########################################
+
+sudo nano ~/.bashrc
+add followning
+
+alias s="source venv/bin/activate"
+alias p="python SpiBerryEngine.py"
+alias sp="s && p"
+
+echo "Do you wish to run SpiBerry?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) sp; break;;
+        No ) echo ok;;
+    esac
+done
