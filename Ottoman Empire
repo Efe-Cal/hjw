@@ -367,7 +367,7 @@ async def main():
     while(checkColor(0, 470)):
         gyroRun(-380, 0)
     motor_pair.stop(motor_pair.PAIR_1)
-    moveWithGyro(370, 0, 460)
+    moveWithGyro(380, 0, 470)
     twoWheelTurn(900)
 
     hizlann(-930, 900, 1980, 450)
@@ -406,7 +406,7 @@ async def main():
     moveWithGyro(410, 0, 510)
     twoWheelSlow(-900)
 
-    moveWithGyro(370, -900, 530)
+    moveWithGyro(370, -900, 540)
 
     # küpleri kap ilk
     await diff_arms.set_partial_closure(0.9)
@@ -539,12 +539,12 @@ async def main():
     utime.sleep_ms(200)
     gyroTurn(-445, "f", "f")
 
-    moveWithGyro(-560, -460, 360)
+    moveWithGyro(-550, -460, 320)
     await motor.run_for_time(KALDIRAC, 400, -600)
     moveWithGyro(480, -460, 350)
     await motor.run_for_time(KALDIRAC, 450, 620)
 
-    moveWithGyro(600, -460, 420)
+    moveWithGyro(600, -460, 390)
     await diff_arms.set_partial_closure(0.8)
     moveWithGyro(-550, -460, 300)
 
@@ -553,14 +553,14 @@ async def main():
     fastfastTurn(-280, "b")
     moveWithGyro(730, -280, 780)
     gyroTurn(-900, "s", "b")
-    moveWithGyro(-500, -900, 570)
+    moveWithGyro(-500, -900, 550)
     await diff_arms.set_partial_closure(-0.4)
-    moveWithGyro(550, -900, 600)
+    moveWithGyro(550, -900, 550)
     utime.sleep_ms(100)
     moveWithGyro(-650, -900, 500)
     gyroTurn(500, "s" ,"f")
     twoWheelSlow(-1360)
-    moveWithGyro(-750, -1360, 550)
+    moveWithGyro(-800, -1360, 560)
 
 
 
