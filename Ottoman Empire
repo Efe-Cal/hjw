@@ -340,46 +340,48 @@ def hizlann(velocity:int, angle:int, duration:int, katsayi:int, ST = motor.HOLD)
 
 
 raspi = Raspi()
-servo = raspi.register_device("servo", "kerem", "14","0","180","0-00095","0-0028","10")
+servo = raspi.register_device("servo", "kerem", "14","0","180","0.00095","0.0028","10")
 
+kareRenk = input(";raspi_functions.image_job();\n").strip()
+kareRenk = input(";raspi_functions.image_job();\n").strip()
+kareRenk = input(";raspi_functions.image_job();\n").strip()
 
+print(kareRenk)
 # pozitif kolu aşağı çeker
 async def main():
-    kareRenk = input(";raspi_functions.image_job();\n").strip()
-    print(kareRenk)
-    #kareRenk = "r"
+    #kareRenk = "y"
     motion_sensor.reset_yaw(0)
     motion_sensor.set_yaw_face(motion_sensor.TOP)
     motor_pair.pair(motor_pair.PAIR_1,SAG_TEKER,SOL_TEKER)
 
-    # servo.set_angle(0)
-    # utime.sleep_ms(1000)
-    # servo.set_angle(90)
-    # utime.sleep_ms(1000)
-    # servo.set_angle(180)
+    utime.sleep_ms(2000)
+    print(kareRenk)
+    print(kareRenk)
+    print(kareRenk)
 
-    # moveWithGyro(-560, 0, 300, motor.COAST)
-    # moveWithGyro(-770, 0, 500, motor.COAST)
-    # moveWithGyro(-600, 0, 330)
-    if kareRenk == "b":
-        hizlann(-900, 0, 1200, 500)
+    #kareRenk = "r"
+
+
+    if kareRenk == "r" or kareRenk == "R":
+        gyroTurn(510, "f", "b")
+        moveWithGyro(-680, 510, 685)
+        utime.sleep_ms(150)
+        gyroTurn(-900, "s", "f")
         await motor.run_for_time(KALDIRAC, 520, 580, stop=motor.HOLD)
         motor.stop(KALDIRAC, stop=motor.BRAKE)
-        #motor.run(port.E, 250)
+        gyroTurn(0, "f", "f")
+        moveWithGyro(-540, 0, 340)
         while(checkColor(0, 470)):
             gyroRun(-380, 0)
         motor_pair.stop(motor_pair.PAIR_1)
-        moveWithGyro(380, 0, 470)
+        moveWithGyro(375, 0, 470)
         twoWheelTurn(900)
 
-        hizlann(-930, 900, 2000, 450)
-        utime.sleep_ms(250)
-        # moveWithGyro(-280, 900, 320, motor.COAST)
-        # moveWithGyro(-360, 900, 330, motor.COAST)
-        # moveWithGyro(-480, 900, 330, motor.COAST)
-        # moveWithGyro(-590, 900, 320, motor.COAST)
-        # moveWithGyro(-670, 900, 650, motor.COAST)
-        # moveWithGyro(-750, 900, 600)
+        #hizlann(-945, 910, 2070, 445)
+        hizlann(-985, 910, 2160, 445)
+        utime.sleep_ms(260)
+        motor_pair.stop(motor_pair.PAIR_1, stop=motor.HOLD)
+        utime.sleep_ms(150)
 
         await motor.run_for_time(KALDIRAC, 400, -600)
         moveWithGyro(950, 910, 1100)
@@ -408,23 +410,73 @@ async def main():
         moveWithGyro(410, 0, 510)
         twoWheelSlow(-900)
         moveWithGyro(370, -900, 540)
-    elif kareRenk == "r":
-        gyroTurn(510, "f", "b")
-        moveWithGyro(-680, 510, 685)
-        utime.sleep_ms(150)
+    elif kareRenk == "y":
+        gyroTurn(500, "f", "b")
+        moveWithGyro(-980, 500, 1020)
         gyroTurn(-900, "s", "f")
+        moveWithGyro(-630, -900, 510)
+        gyroTurn(-1770, "f", "f")
         await motor.run_for_time(KALDIRAC, 520, 580, stop=motor.HOLD)
         motor.stop(KALDIRAC, stop=motor.BRAKE)
+        await motor.run_for_time(SAG_TEKER, 350, 550)
+        twoWheelTurn(20)
+        moveWithGyro(-720, 0, 450)
+        while(checkColor(0, 470)):
+            gyroRun(-380, 0)
+        motor_pair.stop(motor_pair.PAIR_1)
+        moveWithGyro(368, 0, 460)
+        twoWheelTurn(890)
+
+        #hizlann(-945, 910, 2070, 445)
+        hizlann(-960, 900, 2060, 445)
+
+        utime.sleep_ms(260)
+        motor_pair.stop(motor_pair.PAIR_1, stop=motor.HOLD)
+        utime.sleep_ms(150)
+
+        await motor.run_for_time(KALDIRAC, 400, -600)
+        moveWithGyro(950, 910, 1100)
         gyroTurn(0, "f", "f")
-        moveWithGyro(-520, 0, 350)
+        moveWithGyro(-480, 0, 390)
+        await motor.run_for_time(KALDIRAC, 450, 720)
+        moveWithGyro(450, 0, 300)
+        await motor.run_for_time(KALDIRAC, 450, -620)
+        moveWithGyro(-360, 0, 220)
+
+        twoWheelSlow(-890)
+        moveWithGyro(-650, -900, 500, motor.COAST)
+        moveWithGyro(-830, -900, 650, motor.COAST)
+        moveWithGyro(-450, -900, 600, motor.COAST)
+        utime.sleep_ms(600)
+
+
+        # gyro sifirla
+        motion_sensor.reset_yaw(0)
+        motion_sensor.set_yaw_face(motion_sensor.TOP)
+
+        #moveWithGyro(380, 0, 260)
+        while(checkColor(0, 470)):
+            gyroRun(300, 0)
+        motor_pair.stop(motor_pair.PAIR_1, stop=motor.BRAKE)
+        moveWithGyro(410, 0, 510)
+        twoWheelSlow(-900)
+        moveWithGyro(370, -900, 540)
+    else:
+        hizlann(-900, 0, 1200, 500)
+        await motor.run_for_time(KALDIRAC, 520, 580, stop=motor.HOLD)
+        motor.stop(KALDIRAC, stop=motor.BRAKE)
+        #motor.run(port.E, 250)
         while(checkColor(0, 470)):
             gyroRun(-380, 0)
         motor_pair.stop(motor_pair.PAIR_1)
         moveWithGyro(380, 0, 460)
         twoWheelTurn(900)
 
-        hizlann(-945, 910, 2070, 445)
-        utime.sleep_ms(250)
+        #hizlann(-930, 905, 2000, 450)
+        hizlann(-950, 905, 2100, 445)
+        utime.sleep_ms(260)
+        motor_pair.stop(motor_pair.PAIR_1, stop=motor.HOLD)
+        utime.sleep_ms(150)
 
         await motor.run_for_time(KALDIRAC, 400, -600)
         moveWithGyro(950, 910, 1100)
@@ -461,7 +513,7 @@ async def main():
     moveWithGyro(420, -900, 440)
 
     await diff_arms.set_partial_closure(-0.4, speed=-500)
-    moveWithGyro(530, -900, 270, motor.COAST)
+    moveWithGyro(540, -900, 280, motor.COAST)
     moveWithGyro(360, -900, 280)
 
     # kap ikinci ilk
@@ -507,7 +559,7 @@ async def main():
     gyroTurn(-900, "s", "b")
     utime.sleep_ms(20)
 
-    moveWithGyro(-215, -900, 230)
+    moveWithGyro(-206, -900, 228)
     utime.sleep_ms(100)
     # birak
     await diff_arms.set_partial_closure(-0.8, speed=-500)
@@ -521,7 +573,9 @@ async def main():
     moveWithGyro(-420, 0, 250)
     utime.sleep_ms(350)
     servo.set_angle(77)
-    utime.sleep_ms(350)
+    servo.set_angle(77)
+    servo.set_angle(77)
+    utime.sleep_ms(250)
     moveWithGyro(620, 0, 450)
     utime.sleep_ms(200)
     moveWithGyro(-550, 0, 450)
@@ -529,8 +583,8 @@ async def main():
     servo.set_angle(0)
     servo.set_angle(0)
     servo.set_angle(0)
-    utime.sleep_ms(350)
-    moveWithGyro(1000, 0, 1600)
+    utime.sleep_ms(250)
+    moveWithGyro(1020, 0, 1650)
 
 
 
@@ -541,14 +595,14 @@ async def main():
     gyroTurn(-900, "f", "b")
     await diff_arms.set_closed_arms(0, -500)
 
-    moveWithGyro(920, -900, 500)
+    moveWithGyro(940, -900, 480)
     while(checkColor(700, 1500)):
         gyroRun(300, -900)
     motor_pair.stop(motor_pair.PAIR_1)
 
     moveWithGyro(950, -900, 950)
     gyroTurn(0, "s", "f")
-    moveWithGyro(-880, 0, 670)
+    moveWithGyro(-880, 0, 660)
     await motor.run_for_time(KALDIRAC, 420, 650)
     # bayrak çek
     moveWithGyro(450, 0, 700)
@@ -598,9 +652,9 @@ async def main():
     fastfastTurn(-280, "b")
     moveWithGyro(730, -280, 780)
     gyroTurn(-900, "s", "b")
-    moveWithGyro(-500, -900, 550)
+    moveWithGyro(-500, -900, 540)
     await diff_arms.set_partial_closure(-0.4)
-    moveWithGyro(540, -900, 520)
+    moveWithGyro(530, -900, 500)
     utime.sleep_ms(100)
     moveWithGyro(-650, -900, 500)
     gyroTurn(500, "s" ,"f")
@@ -610,3 +664,4 @@ async def main():
 
 
 runloop.run(main())
+print(kareRenk)
