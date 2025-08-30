@@ -1,4 +1,3 @@
-import glob
 import subprocess
 import cv2
 import numpy as np
@@ -203,7 +202,6 @@ def detect_and_extract_contours(img_path):
         
             if ch=="r":
                 color = is_contour_closer_to_red_or_yellow(img, contours[0])
-                # print(f"Detected color: {color}")
                 detections.append((color,cx,cy))
             else:
                 detections.append((ch,cx,cy))
@@ -229,7 +227,8 @@ def load_config():
     script_dir = os.path.dirname(__file__)
     config_path = os.path.join(script_dir, 'config.json')
     if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Configuration file not found at {config_path}. Please create it first.")
+        print(f"Configuration file not found at {config_path}. Using the hardcoded default configuration.")
+        return {"big_box_crop": [1735, 657, 172, 122], "color_ranges": {"red": [[[0, 143, 54], [12, 253, 164]], [[162, 143, 54], [179, 253, 164]]], "green": [[[60, 137, 13], [90, 247, 123]]], "blue": [[[94, 173, 45], [124, 255, 155]]], "yellow": [[[7, 170, 99], [37, 255, 209]]]}}
     
     with open(config_path, 'r') as f:
         config = json.load(f)
@@ -261,7 +260,8 @@ def extend_color_range(color_range: list, offset:tuple=(5,10,10)) -> list:
         
     return [[lo, hi]]
 
-def detect_boxes(img,color_ranges, display:bool):
+retry_with_extended = False
+def detect_boxes(img,color_ranges):
     """
     Detects red, blue, yellow, and green boxes in the image and returns their order from left to right.
     """
@@ -298,9 +298,12 @@ def detect_boxes(img,color_ranges, display:bool):
         detections.append((color,area,cx,cy))
 
     
-    if len(detections) == 0:
+    if len(detections) == 0 and retry_with_extended==False:
         print("No boxes detected")
-        return None
+        return detect_boxes(img, extend_color_range(color_ranges))
+    if len(detections) == 0 and retry_with_extended==True:
+        print("No boxes detected even after extending ranges")
+        return None 
     elif len(detections) == 1:
         return detections[0][0][0]    
     elif len(detections) > 1:
@@ -312,8 +315,7 @@ def detect_boxes(img,color_ranges, display:bool):
         scores = norm_areas + (1 - norm_centers)  # larger area and closer to center preferred
         best_idx = np.argmax(scores)
         detection = detections[best_idx][0][0]
-    
-    return detection
+        return detection
 
 def crop_image(img, x:int, y:int, w:int, h:int) -> np.ndarray:
     return img[y:y+h, x:x+w]
@@ -325,35 +327,13 @@ def get_box_color(img_path:str,display:bool=False) -> str:
     
     image = cv2.imread(img_path)
     
-    # big_box_image = crop_image(image1, *config["big_box_crop"])
     box_image = crop_image(image, *config["big_box_crop"])
 
     d = detect_boxes(box_image, color_ranges, display)
     return d
 
 
-def image_job():
-    # rpicam-still --output ./image.png --timeout 200 --width 1920 --height 1080 --rotation 180
-    subprocess.run(["rpicam-still", "--output", img_path, "--timeout", "200", "--width", "1920", "--height", "1080", "--rotation", "180"])
-    
-    v1_2 = get_box_color(img_path, display=False)
-    v3 = detect_and_extract_contours(img_path)
-    
-    print(f"v1.2 detected: {v1_2}, v3 detected: {v3}")
-    
-    if v1_2 == v3:
-        return v1_2
-    if v1_2 in ["r","y"] and v3 in ["r","y"]:
-        return v1_2
-    if v3 == "g":
-        return 'g'
-    
-def main(img_path):
-    v1_2 = get_box_color(img_path, display=False)
-    v3 = detect_and_extract_contours(img_path)
-    
-    print(f"v1.2 detected: {v1_2}, v3 detected: {v3}")
-    
+def decider(v1_2, v3):
     if v1_2 == v3:
         return v1_2
     if v1_2 in ["r","y"] and v3 in ["r","y"]:
@@ -367,6 +347,15 @@ def main(img_path):
     if v1_2 == None and v3 == None:
         return "b"
 
-for i in glob.glob("C:/Users/efeca/Desktop/imgs/*.png"):
-    print(i)
-    main(i)    
+def image_job():
+    # rpicam-still --output ./image.png --timeout 200 --width 1920 --height 1080 --rotation 180
+    subprocess.run(["rpicam-still", "--output", img_path, "--timeout", "200", "--width", "1920", "--height", "1080", "--rotation", "180"])
+    
+    v1_2 = get_box_color(img_path)
+    v3 = detect_and_extract_contours(img_path)
+    
+    print(f"v1.2 detected: {v1_2}, v3 detected: {v3}")
+
+    return decider(v1_2, v3)
+
+
