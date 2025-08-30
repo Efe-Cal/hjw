@@ -24,7 +24,7 @@ def input_with_timeout(prompt, timeout):
         try:
             while True:
                 elapsed = _diff_ms(_now_ms(), start)
-                remaining = (timeout_ms - elapsed) / 1000.0
+                remaining = (timeout_ms - elapsed) // 1000
                 if remaining <= 0:
                     sys.stdout.write("\n")
                     sys.stdout.flush()
@@ -60,28 +60,42 @@ class Device:
         self.device_name = device_name
         self.args = args
 
+
     def __repr__(self):
         return f"Device(type={self.device_type}, name={self.device_name}, args={self.args})"
 
 class Servo(Device):
     def get_angle(self, timeout=1):
-        return input_with_timeout(f"devices.{self.device_name}.get_angle():", timeout=timeout)
+        print(f";devices.{self.device_name}.get_angle();")
+        return sys.stdin.readline().strip()
     def set_angle(self, angle, timeout=2):
-        return input_with_timeout(f"devices.{self.device_name}.set_angle({angle}):", timeout=timeout)
+        print(f";devices.{self.device_name}.set_angle({angle});")
+        return sys.stdin.readline().strip()
+
 
 class DistanceSensor(Device):
     def get_distance(self, timeout=1):
-        return input_with_timeout(f"devices.{self.device_name}.get_distance():", timeout=timeout)
+        print(f";devices.{self.device_name}.get_distance();")
+        return sys.stdin.readline().strip()
+
 
 class Raspi:
     def register_device(self, device_type, device_name, *args, timeout=1):
-        input_with_timeout(f"devices.register({device_type}, {device_name}, {', '.join(args)}):", timeout=timeout)
+        print(f";devices.register({device_type}, {device_name}, {', '.join(args)});")
+        sys.stdin.readline().strip()
+
         if device_type == "servo":
             return Servo(device_type, device_name, *args)
         elif device_type == "distance_sensor":
             return DistanceSensor(device_type, device_name, *args)
         else:
             raise ValueError(f"Unsupported device type: {device_type}")
+    def func(self, func_string):
+        print(f";raspi_functions.{func_string};")
+        r = sys.stdin.readline().strip()
+        print(r)
+        return r
+
 
 # Example usage
 if __name__ == "__main__":
