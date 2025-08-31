@@ -321,7 +321,7 @@ def crop_image(img, x:int, y:int, w:int, h:int) -> np.ndarray:
     return img[y:y+h, x:x+w]
     
 
-def get_box_color(img_path:str,display:bool=False) -> str:
+def get_box_color(img_path:str) -> str:
     config = load_config()
     color_ranges = config["color_ranges"]
     
@@ -329,7 +329,7 @@ def get_box_color(img_path:str,display:bool=False) -> str:
     
     box_image = crop_image(image, *config["big_box_crop"])
 
-    d = detect_boxes(box_image, color_ranges, display)
+    d = detect_boxes(box_image, color_ranges)
     return d
 
 
@@ -358,4 +358,23 @@ def image_job():
 
     return decider(v1_2, v3)
 
+def take_pic(img_path):
+    subprocess.run(["rpicam-still", "--output", img_path, "--timeout", "200", "--width", "1920", "--height", "1080", "--rotation", "180"])
+    return img_path
 
+def main():
+    import glob
+    for img_path in glob.glob(r"C:\Users\efeca\Desktop\imgs\*.png"):
+        print(f"Processing {img_path}")
+
+        v1_2 = get_box_color(img_path)
+        v3 = detect_and_extract_contours(img_path)
+
+        print(f"v1.2 detected: {v1_2}, v3 detected: {v3}")
+
+        # Use decision logic to combine results
+        final_result = decider(v1_2, v3)
+        print(f"Final detected color: {final_result}")
+
+if __name__ == '__main__':
+    main()
